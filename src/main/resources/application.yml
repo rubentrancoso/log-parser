@@ -18,9 +18,6 @@ spring:
 tool:
   loadData: true
     
-server:
-  port: 8080
-
 logging:
   pattern:
     console:  
