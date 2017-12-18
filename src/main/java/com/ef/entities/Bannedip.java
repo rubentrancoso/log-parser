@@ -7,10 +7,11 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Iprequest {
+public class Bannedip {
 	
 	@Id
 	private String ip;
 	private Integer requests;
+	private String note;
 
 }

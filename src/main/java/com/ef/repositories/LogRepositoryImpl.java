@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.ef.entities.Iprequest;
+import com.ef.entities.Bannedip;
 
 @Repository
 public class LogRepositoryImpl implements LogRepositoryCustom {
@@ -27,7 +27,7 @@ public class LogRepositoryImpl implements LogRepositoryCustom {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Iprequest> getIpByDailyThreshold(String startDateStr, int threshold) {
+	public List<Bannedip> getIpByDailyThreshold(String startDateStr, int threshold) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:sss");
 		Query query = null;
 		try {
@@ -37,9 +37,9 @@ public class LogRepositoryImpl implements LogRepositoryCustom {
 		    cal.add(Calendar.DAY_OF_MONTH, 1);
 		    Date dateEnd = cal.getTime();
 		    String endDateStr = df.format(dateEnd);
-			String sqlQuery = "SELECT count(id) AS requests, ip FROM logline WHERE date BETWEEN '%s' AND '%s' GROUP BY ip HAVING requests >= %d";
+			String sqlQuery = "SELECT count(id) AS requests, ip, '' as note FROM logline WHERE date BETWEEN '%s' AND '%s' GROUP BY ip HAVING requests >= %d";
 			sqlQuery = String.format(sqlQuery, startDateStr, endDateStr, threshold);
-			query = entityManager.createNativeQuery(sqlQuery, Iprequest.class);
+			query = entityManager.createNativeQuery(sqlQuery, Bannedip.class);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -48,7 +48,7 @@ public class LogRepositoryImpl implements LogRepositoryCustom {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Iprequest> getIpByHourlyThreshold(String startDateStr, int threshold) {
+	public List<Bannedip> getIpByHourlyThreshold(String startDateStr, int threshold) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:sss");
 		Query query = null;
 		try {
@@ -58,9 +58,9 @@ public class LogRepositoryImpl implements LogRepositoryCustom {
 		    cal.add(Calendar.HOUR_OF_DAY, 1);
 		    Date dateEnd = cal.getTime();
 		    String endDateStr = df.format(dateEnd);
-			String sqlQuery = "SELECT count(id) AS requests, ip FROM logline WHERE date BETWEEN '%s' AND '%s' GROUP BY ip HAVING requests >= %d";
+			String sqlQuery = "SELECT count(id) AS requests, ip, '' as note FROM logline WHERE date BETWEEN '%s' AND '%s' GROUP BY ip HAVING requests >= %d";
 			sqlQuery = String.format(sqlQuery, startDateStr, endDateStr, threshold);
-			query = entityManager.createNativeQuery(sqlQuery, Iprequest.class);
+			query = entityManager.createNativeQuery(sqlQuery, Bannedip.class);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

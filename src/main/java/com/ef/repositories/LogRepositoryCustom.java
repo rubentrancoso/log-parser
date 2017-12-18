@@ -2,9 +2,9 @@ package com.ef.repositories;
 
 import java.util.List;
 
-import com.ef.entities.Iprequest;
+import com.ef.entities.Bannedip;
 
 public interface LogRepositoryCustom {
-	List<Iprequest> getIpByDailyThreshold(String startDate, int threshold);
-	List<Iprequest> getIpByHourlyThreshold(String startDate, int threshold);
+	List<Bannedip> getIpByDailyThreshold(String startDate, int threshold);
+	List<Bannedip> getIpByHourlyThreshold(String startDate, int threshold);
 }

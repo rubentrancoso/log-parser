@@ -21,14 +21,14 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import com.djdch.log4j.StaticShutdownCallbackRegistry;
+import com.ef.repositories.BannedipRepository;
 import com.ef.repositories.LogRepository;
 
 import ef.com.types.DurationType;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@EnableJpaRepositories(basePackageClasses = { LogRepository.class })
+@EnableJpaRepositories(basePackageClasses = { LogRepository.class, BannedipRepository.class })
 @EntityScan(basePackages = { "com.ef.entities" })
 @ComponentScan(basePackages = { "com.ef" })
 public class Parser {
@@ -58,17 +58,6 @@ public class Parser {
 	// Program arguments: --accesslog=/path/to/file --startDate=2017-01-01.13:00:00
 	// --duration=hourly --threshold=100
 	public static void main(String[] args) {
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-		    @Override
-		    public void run() {
-		        try {
-		            // Do your usual shutdown stuff here that need logging
-		        } finally {
-		            // Shutdown Log4j 2 manually
-		            StaticShutdownCallbackRegistry.invoke();
-		        }
-		    }
-		}));
 		String[] parsedArgs = parseArgs(args);
 		// map arguments to be used on log
 		logger.info("Parser started.");

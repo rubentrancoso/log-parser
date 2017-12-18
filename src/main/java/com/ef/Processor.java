@@ -20,12 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.ef.entities.Iprequest;
+import com.ef.entities.Bannedip;
 import com.ef.entities.Logline;
+import com.ef.repositories.BannedipRepository;
 import com.ef.repositories.LogRepository;
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import ef.com.types.DurationType;
 
@@ -34,6 +32,9 @@ public class Processor {
 
 	@Autowired
 	LogRepository logRepository;
+
+	@Autowired
+	BannedipRepository bannedipRepository;
 
 	@Value("${tool.loadData}")
 	private boolean loadData;
@@ -107,7 +108,7 @@ public class Processor {
 		}
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:sss");
 		String endDateStr = df.format(startDate);
-		List<Iprequest> result = null;
+		List<Bannedip> result = null;
 		switch (duration.durationType()) {
 		case 0:
 			result = logRepository.getIpByHourlyThreshold(endDateStr, threshold);
@@ -117,24 +118,12 @@ public class Processor {
 			break;
 		}
 		if (result != null) {
-			for (Iprequest iprequest : result) {
-				System.out.println(iprequest.getIp());
+			String message = String.format("made more than %d requests in an %s", threshold, duration.dimension());
+			for (Bannedip bannedip : result) {
+				bannedip.setNote(message);
+				bannedipRepository.save(bannedip);
+				System.out.println(bannedip.getIp());
 			}
-		}
-	}
-
-	public <T> List<T> loadCSVObjectList(Class<T> type, String fileName) {
-		logger.info("load csv...");
-		try {
-			CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator('|');
-			CsvMapper mapper = new CsvMapper();
-			File file = new File(fileName);
-			MappingIterator<T> readValues = mapper.readerFor(type).with(bootstrapSchema).readValues(file);
-			List<T> result = readValues.readAll();
-			return result;
-		} catch (Exception e) {
-			logger.error("Error occurred while loading object list from file " + fileName, e);
-			return Collections.emptyList();
 		}
 	}
 
